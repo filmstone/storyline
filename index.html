@@ -248,7 +248,7 @@
         .ws-body {
             max-width: 860px;
             margin: 0 auto;
-            padding: 32px 24px 140px;
+            padding: 32px 24px 48px;
         }
 
         /* ───────────── CARDS ───────────── */
@@ -593,42 +593,7 @@
 
         .btn-sm:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
 
-        /* ───────────── FIXED BOTTOM BAR ───────────── */
-        .ws-bottom-bar {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            padding: 14px 24px;
-            z-index: 100;
-            box-shadow: 0 -4px 20px rgba(26,39,68,0.08);
-        }
 
-        .ws-bottom-bar-inner {
-            max-width: 860px;
-            margin: 0 auto;
-        }
-
-        .btn-save-main {
-            width: 100%;
-            padding: 16px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-save-main:hover { background: #b86830; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,118,58,0.35); }
-        .btn-save-main.saved { background: var(--teal); }
 
         /* ───────────── ANIMATIONS ───────────── */
         @keyframes fadeUp {
@@ -720,7 +685,7 @@
             <span class="landing-feature-pill">📝 5단계 경험 정리</span>
             <span class="landing-feature-pill">🤖 AI 종합 분석</span>
             <span class="landing-feature-pill">💾 자동 파일 저장</span>
-            <span class="landing-feature-pill">🔒 개인정보 브라우저 내 보관</span>
+
         </div>
 
         <button class="btn-start" onclick="startWorksheet()">
@@ -731,9 +696,7 @@
         </button>
     </div>
 
-    <div class="landing-bottom-note">
-        입력한 내용은 이 기기의 브라우저에만 저장되며 외부로 전송되지 않습니다
-    </div>
+
 </div>
 
 <!-- ══════════════ WORKSHEET ══════════════ -->
@@ -754,19 +717,7 @@
     <!-- Body -->
     <div class="ws-body" id="wsBody"></div>
 
-    <!-- Bottom Save Bar -->
-    <div class="ws-bottom-bar">
-        <div class="ws-bottom-bar-inner">
-            <button class="btn-save-main" id="btnSaveMain" onclick="saveProgressAsFile()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                    <polyline points="17 21 17 13 7 13 7 21"/>
-                    <polyline points="7 3 7 8 15 8"/>
-                </svg>
-                진행상황 저장하기 (.txt)
-            </button>
-        </div>
-    </div>
+
 </div>
 
 <script>
@@ -905,16 +856,7 @@ function saveProgressAsFile() {
     flashSaveButton();
 }
 
-function flashSaveButton() {
-    const btn = document.getElementById('btnSaveMain');
-    if (!btn) return;
-    btn.classList.add('saved');
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 저장 완료!`;
-    setTimeout(() => {
-        btn.classList.remove('saved');
-        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 진행상황 저장하기 (.txt)`;
-    }, 2500);
-}
+
 
 // ══════════════════════════════════════════
 // AI 분석
