@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+        ╔══════════════════════════════════════════════════════╗
+        ║  보안 정책 (Content Security Policy)                  ║
+        ║  - 허용 스크립트: 이 페이지 인라인 스크립트만          ║
+        ║  - 허용 외부 연결: Google Fonts (폰트 전용)            ║
+        ║  - 폼 제출: 없음 (데이터가 서버로 나가지 않음)         ║
+        ╚══════════════════════════════════════════════════════╝
+    -->
+    <meta http-equiv="Content-Security-Policy"
+          content="
+            default-src 'self';
+            script-src 'unsafe-inline';
+            style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+            font-src https://fonts.gstatic.com;
+            img-src 'self' data:;
+            connect-src 'none';
+            object-src 'none';
+            base-uri 'self';
+            form-action 'none';
+          ">
     <title>나만의 스토리라인 만들기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -694,6 +716,26 @@
                 <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
         </button>
+
+        <div style="
+            margin-top: 2.2rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: left;
+            animation: fadeUp 0.6s 0.5s ease both;
+        ">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a0d5cc" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span style="font-size:11px; font-weight:700; color:#a0d5cc; letter-spacing:0.08em; text-transform:uppercase;">개인정보 보호 안내</span>
+            </div>
+            <ul style="list-style:none; padding:0; margin:0;">
+                <li style="font-size:12px; color:rgba(255,255,255,0.5); padding:3px 0; display:flex; gap:8px;"><span style="color:#a0d5cc;flex-shrink:0;">✓</span>작성 내용은 <strong style="color:rgba(255,255,255,0.7);">내 브라우저에만 저장</strong>됩니다 — 서버·외부로 전송되지 않습니다</li>
+                <li style="font-size:12px; color:rgba(255,255,255,0.5); padding:3px 0; display:flex; gap:8px;"><span style="color:#a0d5cc;flex-shrink:0;">✓</span>AI 분석 시 프롬프트가 <strong style="color:rgba(255,255,255,0.7);">자동 전송되지 않고</strong> 직접 붙여넣기 방식으로만 사용됩니다</li>
+                <li style="font-size:12px; color:rgba(255,255,255,0.5); padding:3px 0; display:flex; gap:8px;"><span style="color:#a0d5cc;flex-shrink:0;">✓</span>데이터 삭제: 브라우저 설정 → <strong style="color:rgba(255,255,255,0.7);">사이트 데이터 삭제</strong></li>
+            </ul>
+        </div>
     </div>
 
 
@@ -711,6 +753,7 @@
                 </div>
                 <span class="ws-progress-label" id="progressLabel">0%</span>
             </div>
+
         </div>
     </div>
 
@@ -721,6 +764,20 @@
 </div>
 
 <script>
+// ══════════════════════════════════════════
+// 보안: HTML 이스케이프 유틸리티
+// 사용자 입력값을 innerHTML에 삽입할 때 반드시 사용
+// ══════════════════════════════════════════
+function escapeHTML(rawText) {
+    if (rawText == null) return '';
+    return String(rawText)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+}
+
 // ══════════════════════════════════════════
 // SSoT: AI 툴 설정
 // ══════════════════════════════════════════
@@ -1025,11 +1082,14 @@ function renderSection(sectionKey, stepLabel, sectionTitle, bodyHTML) {
 }
 
 // ── 텍스트에어리어 헬퍼 ──
+// 보안: 사용자 입력값(fieldKey 내용)을 escapeHTML로 처리 후 삽입
 function renderTextarea(labelText, fieldKey, placeholderText) {
-    const savedValue = (appState.responses[fieldKey] || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const safeValue       = escapeHTML(appState.responses[fieldKey] || '');
+    const safePlaceholder = escapeHTML(placeholderText);
+    const safeLabel       = escapeHTML(labelText);
     return `
-    <label class="field-label">${labelText}</label>
-    <textarea data-field="${fieldKey}" placeholder="${placeholderText}" rows="4">${appState.responses[fieldKey] || ''}</textarea>`;
+    <label class="field-label">${safeLabel}</label>
+    <textarea data-field="${escapeHTML(fieldKey)}" placeholder="${safePlaceholder}" rows="4">${safeValue}</textarea>`;
 }
 
 // ── 질문박스 헬퍼 ──
